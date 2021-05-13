@@ -107,6 +107,7 @@ var player, platforms;
 var cursors;
 
 var gameWin = 0;
+var gameLoss = 0;
 var gameWidth = 9000;
 var gameHeight = 300;
 
@@ -129,7 +130,8 @@ function healPlayer(heal){
 }
 
 function endGame(score){
-    if(score === 0){
+    if(score === 0 && gameLoss === 0){
+        gameLoss = 1;
         alert('Game over!!');
         game.destroy();
         location.reload(true);
