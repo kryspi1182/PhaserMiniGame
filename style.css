@@ -1,0 +1,11 @@
+#bossHealth{
+    border: 5px solid grey;
+    border-radius: 7px;
+    background-color: grey;
+}
+
+#bossHealthLeft{
+    background-color: green;
+    height: 24px;
+    border-radius: 3px;
+}
