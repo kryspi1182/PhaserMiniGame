@@ -1,7 +1,21 @@
+body{
+    margin: 20px;
+}
+
+.titles{
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+}
+
 #bossHealth{
     border: 5px solid grey;
     border-radius: 7px;
     background-color: grey;
+    display: none;
+    width: 50%;
+    float: left;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 #bossHealthLeft{
@@ -9,3 +23,45 @@
     height: 24px;
     border-radius: 3px;
 }
+
+#bossLabel{
+    display: none;
+    /*margin-top: 10px;
+    margin-bottom: 10px;*/
+}
+
+#playerLabel{
+    /*margin-top: 10px;
+    margin-bottom: 10px;*/
+}
+
+#playerHealth{
+    border: 5px solid grey;
+    border-radius: 7px;
+    background-color: grey;
+    width: 25%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#playerHealthLeft{
+    background-color: red;
+    height: 24px;
+    border-radius: 3px;
+}
+
+#rightBanner{
+    width: 25%;
+    float: right;
+}
+
+#highscores{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#controls{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+

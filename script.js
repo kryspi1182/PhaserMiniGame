@@ -22,8 +22,8 @@ var config = {
 var game = new Phaser.Game(config);
 
 var health = 100;
-var healthText = document.getElementById('playerHealth');
-healthText.innerHTML = 'HP: ' + health;
+var playerHealthbar = document.getElementById('playerHealthLeft');
+//healthText.innerHTML = 'HP: ' + health;
 
 var highscores = document.getElementById('highscores');
 
@@ -80,9 +80,9 @@ function sortHighscores(score1, score2){
 function preload() {
     this.load.baseURL = 'https://examples.phaser.io/assets/';
     this.load.crossOrigin = 'anonymous';
-    this.load.image('background', 'games/starstruck/background.png');
-    this.load.image('platform', 'sprites/block.png');
-    this.load.image('breakPlatform', 'sprites/square1.png');
+    this.load.image('background', 'textures/cyberglow.png');
+    this.load.image('platform', 'textures/metal.png');
+    this.load.image('breakPlatform', 'textures/wood_by_EricHart3d.png');
     this.load.image('dmgOrb', 'sprites/orb-red.png');
     this.load.image('healOrb', 'sprites/green_ball.png');
     this.load.image('redParticles', 'particles/red.png');
@@ -114,7 +114,7 @@ var gameHeight = 300;
 function damagePlayer(dmg){
     if(health > 0){
         health -= parseInt(dmg);
-        healthText.innerHTML = 'HP: ' + health;
+        playerHealthbar.style.width = health + '%';
     }
     else{
         endGame(0);
@@ -125,7 +125,7 @@ function damagePlayer(dmg){
 function healPlayer(heal){
     if(health < 100){
        health += parseInt(heal);
-        healthText.innerHTML = 'HP: ' + health; 
+        playerHealthbar.style.width = health + '%'; 
     } 
 }
 
@@ -153,7 +153,7 @@ function create() {
     
     //healthText = this.add.text(16, 16, 'HP: 100', {fontSize: '16px', fill:'#FF0000'});
     loadHighscores();
-    let back = this.add.tileSprite(0, 28, 1000, 300, 'background');
+    let back = this.add.tileSprite(0, 0, 1000, 300, 'background');
     back.setOrigin(0)
     back.setScrollFactor(0);//fixedToCamera = true;
     this.cameras.main.setBounds(0, 0, gameWidth, gameHeight);
@@ -269,12 +269,12 @@ function create() {
             break;
         }
     })
-    par = this;
-    parPhy = this.physics;
+    //par = this;
+    //parPhy = this.physics;
 
     generatePlatforms(this.physics, gameWidth-1000, gameHeight, 200, player);
     //createEnemy(this, this.physics, 'droid', 300, 100, 100);
-    generateEnemies(this, this.physics, 'droid', gameWidth-1000, gameHeight, 500, 100, 10);
+    generateEnemies(this, this.physics, 'droid', gameWidth-1500, gameHeight, 500, 100, 10);
     
     boss = this.physics.add.sprite(gameWidth-200, 150, 'boss');
     boss.setDataEnabled();
@@ -380,25 +380,99 @@ function generatePlatforms(parentPhysics, mapWidth, mapHeight, intervalWidth, pl
     platforms = parentPhysics.add.staticGroup();
     breakPlatforms = parentPhysics.add.staticGroup();
     for(var j = 50; j < mapWidth - intervalWidth; j += intervalWidth){
-        var draw = getRandomInt(0, 10);
+        var drawPlatformType = getRandomInt(0, 10);
+        var drawPlatformAmount = getRandomInt(0, 10);
         var imageString = '';
-        if(draw % 2 == 0){
-            platforms.create(
-            getRandomInt(j, j + intervalWidth),
-            getRandomInt(0, mapHeight - 50),
-            'platform');
+        if(drawPlatformType % 2 == 0 || drawPlatformType % 3 == 0){
+            if(drawPlatformAmount % 2 === 0){
+                var x = getRandomInt(j, j + intervalWidth);
+                var y = getRandomInt(0, mapHeight - 50);
+                breakPlatforms.create(
+                    x,
+                    y,
+                    'breakPlatform'
+                );
+                breakPlatforms.create(
+                    x+20,
+                    y,
+                    'breakPlatform'
+                );
+            }
+            if(drawPlatformAmount % 3 === 0){
+                var x = getRandomInt(j, j + intervalWidth);
+                var y = getRandomInt(0, mapHeight - 50);
+                breakPlatforms.create(
+                    x,
+                    y,
+                    'breakPlatform'
+                );
+                breakPlatforms.create(
+                    x+20,
+                    y,
+                    'breakPlatform'
+                );
+                breakPlatforms.create(
+                    x+40,
+                    y,
+                    'breakPlatform'
+                );
+            }
+            else{
+                breakPlatforms.create(
+                getRandomInt(j, j + intervalWidth),
+                getRandomInt(0, mapHeight - 50),
+                'breakPlatform');
+            }
+            
         }
         else{
-            breakPlatforms.create(
-            getRandomInt(j, j + intervalWidth),
-            getRandomInt(0, mapHeight - 50),
-            'breakPlatform');
+            if(drawPlatformAmount % 2 === 0){
+                var x = getRandomInt(j, j + intervalWidth);
+                var y = getRandomInt(0, mapHeight - 50);
+                platforms.create(
+                    x,
+                    y,
+                    'platform'
+                );
+                platforms.create(
+                    x+20,
+                    y,
+                    'platform'
+                );
+            }
+            if(drawPlatformAmount % 3 === 0){
+                var x = getRandomInt(j, j + intervalWidth);
+                var y = getRandomInt(0, mapHeight - 50);
+                platforms.create(
+                    x,
+                    y,
+                    'platform'
+                );
+                platforms.create(
+                    x+20,
+                    y,
+                    'platform'
+                );
+                platforms.create(
+                    x+40,
+                    y,
+                    'platform'
+                );
+            }
+            else{
+                platforms.create(
+                getRandomInt(j, j + intervalWidth),
+                getRandomInt(0, mapHeight - 50),
+                'platform');
+            }
+
+            
         }
         
         
     }
-    platforms.getChildren().forEach(c => c.setScale(0.5).setOrigin(0).refreshBody())
-    breakPlatforms.getChildren().forEach(c => c.setScale(0.5).setOrigin(0).refreshBody())
+    platforms.getChildren().forEach(c => c.setScale(0.07).setOrigin(0).refreshBody())
+    breakPlatforms.getChildren().forEach(c => c.setScale(0.07).setOrigin(0).refreshBody())
 
     parentPhysics.add.collider(player, platforms);
     parentPhysics.add.collider(player, breakPlatforms);
@@ -625,17 +699,19 @@ function generateEnemies(parent, parentPhysics, imageString, mapWidth, mapHeight
 }
 
 function createBoss(parent, parentPhysics, imageString, positionX, positionY, health){
+    document.getElementById('bossHealth').style.display = 'block';
+    document.getElementById('bossLabel').style.display = 'block';
     var upOrDown = 1;    
     boss.data.set('health', health);
     boss.anims.play('bossMovement', true);
     var interval0 = setInterval(function(){
         createBossProjectile(parent, parentPhysics, 'bossProjectile', boss.x-65, boss.y+35, 0);
         console.log('test');
-    }, 200);
+    }, 400);
     
     var interval1 = setInterval(function(){
         createBossProjectile(parent, parentPhysics, 'bossProjectile', boss.x-65, boss.y+35, 3);
-    }, 700);
+    }, 1000);
     
     var interval2 = setInterval(function(){
         createBossProjectile(parent, parentPhysics, 'bossProjectile', boss.x-65, boss.y+35, 4);

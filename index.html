@@ -3,12 +3,29 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
     <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/fc6874d9fd.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div id="playerHealth"></div>
-    <div id="highscores"></div>
+    <span class="titles" id="playerLabel">HP:</span>
+    <div id="playerHealth">
+         <div id="playerHealthLeft"></div>
+    </div>
+    
+    <span class="titles" id="bossLabel">Sinh, The Slumbering Dragon</span>
     <div id="bossHealth">
         <div id="bossHealthLeft"></div>
+    </div>
+    <div id="rightBanner">
+        <span class="titles">Najlepsze wyniki</span>
+        <div id="highscores"></div>
+        <span class="titles">Sterowanie</span>
+        <div id="controls">
+            <div><i class="fas fa-arrow-up"></i><span> - Skok/celowanie w górę</span></div>
+            <div><i class="fas fa-arrow-down"></i><span> - Celowanie w dół</span></div>
+            <div><i class="fas fa-arrow-left"></i><span> - Ruch/celowanie w lewo</span></div>
+            <div><i class="fas fa-arrow-right"></i><span> - Ruch/celowanie w prawo</span></div>
+            <div>Space bar - strzał</div>
+        </div>
     </div>
     <script src="script.js">
 
