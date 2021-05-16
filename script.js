@@ -21,18 +21,16 @@ var config = {
 
 var game = new Phaser.Game(config);
 
+//health and corresponding bars for both player and boss
 var health = 100;
 var playerHealthbar = document.getElementById('playerHealthLeft');
-//healthText.innerHTML = 'HP: ' + health;
-
 var highscores = document.getElementById('highscores');
-
 var playerScore = 0;
 var bossFight = 0;
 var bossHealthPoints = 100;
-
 var bossHealthbar = document.getElementById('bossHealthLeft');
 
+//get highscores from local storage if any exist
 function loadHighscores(){
     if(localStorage.getItem("highscores") != null){
         var scores = JSON.parse(localStorage.getItem("highscores"));
@@ -44,6 +42,7 @@ function loadHighscores(){
     }
 }
 
+//check score, if it's top 5 then it should be displayed
 function submitHighscore(score, nick){
     if(localStorage.getItem("highscores") != null){
         var scores = JSON.parse(localStorage.getItem("highscores"));
@@ -103,14 +102,15 @@ function preload() {
     this.load.spritesheet('boss', 'sprites/stormlord-dragon96x64.png', {frameWidth: 96, frameHeight: 64});
 }
 
+//game variables
 var player, platforms;
 var cursors;
-
 var gameWin = 0;
 var gameLoss = 0;
 var gameWidth = 9000;
 var gameHeight = 300;
 
+//reduce health
 function damagePlayer(dmg){
     if(health > 0){
         health -= parseInt(dmg);
@@ -122,6 +122,7 @@ function damagePlayer(dmg){
     
 }
 
+//increase health
 function healPlayer(heal){
     if(health < 100){
        health += parseInt(heal);
@@ -129,6 +130,7 @@ function healPlayer(heal){
     } 
 }
 
+//finish game
 function endGame(score){
     if(score === 0 && gameLoss === 0){
         gameLoss = 1;
@@ -151,20 +153,22 @@ function endGame(score){
 
 function create() {
     
-    //healthText = this.add.text(16, 16, 'HP: 100', {fontSize: '16px', fill:'#FF0000'});
     loadHighscores();
+    
+    //set screen properties
     let back = this.add.tileSprite(0, 0, 1000, 300, 'background');
     back.setOrigin(0)
-    back.setScrollFactor(0);//fixedToCamera = true;
+    back.setScrollFactor(0);
     this.cameras.main.setBounds(0, 0, gameWidth, gameHeight);
     this.physics.world.setBounds(0, 0, gameWidth, gameHeight);
 
+    //set player properties
     player = this.physics.add.sprite(50, 100, 'player');
-    
     player.setCollideWorldBounds(true);
     player.setBounce(0);
     this.cameras.main.startFollow(player)
     
+    //load particles and generate damage/heal orbs
     var particlesRed = this.add.particles('redParticles');    
     var particlesGreen = this.add.particles('greenParticles');
     particlesExplosion = this.add.particles('explosion');
@@ -175,6 +179,7 @@ function create() {
     generateImages(this, this.physics, 'healOrb', false, gameWidth-1000, gameHeight, 300, particlesGreen, 2, player);
 
 
+    //create animations - player, droids, boss
     this.anims.create({
         key: 'leftPlayer',
         frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
@@ -223,7 +228,7 @@ function create() {
     });
     
     
-
+    //check if shot was fired, if yes check which direction
     cursors = this.input.keyboard.createCursorKeys();
     keys = this.input.keyboard;
     keys.on('keydown', event => {
@@ -269,13 +274,10 @@ function create() {
             break;
         }
     })
-    //par = this;
-    //parPhy = this.physics;
 
+    //create platforms and enemies, also boss object which is inactive
     generatePlatforms(this.physics, gameWidth-1000, gameHeight, 200, player);
-    //createEnemy(this, this.physics, 'droid', 300, 100, 100);
     generateEnemies(this, this.physics, 'droid', gameWidth-1500, gameHeight, 500, 100, 10);
-    
     boss = this.physics.add.sprite(gameWidth-200, 150, 'boss');
     boss.setDataEnabled();
     boss.setBounce(0);
@@ -285,8 +287,10 @@ function create() {
     
 }
 
+//jump flags
 var doubleJump = 0;
 var jumpClicked = 0;
+
 function update() {
     if (cursors.left.isDown) {
         player.setVelocityX(-150);
@@ -310,7 +314,6 @@ function update() {
         else if (doubleJump < 1){
             setTimeout(function(){++doubleJump}, 100);
             setTimeout(function(){player.setVelocityY(-350);}, 0);
-            console.log('doubleJump: '+doubleJump);
         }
         setTimeout(function(){jumpClicked = 0}, 200);
     }
@@ -319,15 +322,12 @@ function update() {
         doubleJump = 0;
     }
     
+    //if player gets to end of map, trigger boss fight
     if(player.x > gameWidth - 600 && bossFight === 0){
         createBoss(this, this.physics, 'boss', gameWidth-100, 150, bossHealthPoints);
         bossFight = 1;
         this.physics.world.setBounds(gameWidth - 650, 0, 700, gameHeight);
     }
-    
-    /*if(keys.spacebar.isDown){
-        
-    }*/
     
 }
 
@@ -350,7 +350,6 @@ function generateImages(parent, parentPhysics, imageString, gravity, mapWidth, m
             getRandomInt(i, i + intervalWidth),
             getRandomInt(0, mapHeight),
             imageString);
-        console.log('anything?');
         
         tmpImage.body.allowGravity = gravity;
         
@@ -383,6 +382,7 @@ function generatePlatforms(parentPhysics, mapWidth, mapHeight, intervalWidth, pl
         var drawPlatformType = getRandomInt(0, 10);
         var drawPlatformAmount = getRandomInt(0, 10);
         var imageString = '';
+        
         if(drawPlatformType % 2 == 0 || drawPlatformType % 3 == 0){
             if(drawPlatformAmount % 2 === 0){
                 var x = getRandomInt(j, j + intervalWidth);
@@ -464,13 +464,11 @@ function generatePlatforms(parentPhysics, mapWidth, mapHeight, intervalWidth, pl
                 getRandomInt(j, j + intervalWidth),
                 getRandomInt(0, mapHeight - 50),
                 'platform');
-            }
-
-            
-        }
-        
-        
+            }           
+        }          
     }
+    
+    //set size of platforms to reasonable, we don't want the whole map blocked
     platforms.getChildren().forEach(c => c.setScale(0.07).setOrigin(0).refreshBody())
     breakPlatforms.getChildren().forEach(c => c.setScale(0.07).setOrigin(0).refreshBody())
 
@@ -617,7 +615,6 @@ function projectileDamageEnemy(projectile, target){
                 bossHealthbar.style.backgroundColor = 'green';
             }, 500);
             target.setVelocityX(0);
-            //target.setVelocityY(0);
         }
     }
     else{
@@ -625,10 +622,8 @@ function projectileDamageEnemy(projectile, target){
         if(--hp <= 0){
             enemies.remove(target);
             target.destroy();
-            //console.log('pre interval ' + intervalId);
             clearInterval(intervalId);
             playerScore += 100;
-            //console.log('post interval ' + intervalId);
         }
         else{
             target.data.set('health', hp);
@@ -702,11 +697,20 @@ function createBoss(parent, parentPhysics, imageString, positionX, positionY, he
     document.getElementById('bossHealth').style.display = 'block';
     document.getElementById('bossLabel').style.display = 'block';
     var upOrDown = 1;    
+    
+    //boss fight starts, delete droids so they don't teleport to player #instakill
+    enemies.getChildren().forEach(
+        e => {
+            var intervalId = e.data.get('interval');
+            e.disableBody(true, true);
+            clearInterval(intervalId);
+        }
+    )
+    
     boss.data.set('health', health);
     boss.anims.play('bossMovement', true);
     var interval0 = setInterval(function(){
         createBossProjectile(parent, parentPhysics, 'bossProjectile', boss.x-65, boss.y+35, 0);
-        console.log('test');
     }, 400);
     
     var interval1 = setInterval(function(){
@@ -736,8 +740,8 @@ function bossDeathAnimation(){
     var intervalsBoss = JSON.parse(boss.data.get('interval'));
     for (var x = 0; x < intervalsBoss.length; x++){
         clearInterval(intervalsBoss[x]);
-        console.log(intervalsBoss[x]);
     }
+    
     boss.setVelocityY(-50);
     var explosions = [];
     setTimeout(function(){
